@@ -223,7 +223,7 @@
             animation: slideIn 0.5s ease-out forwards;
         }
 
-        /* Atualizado: reCAPTCHA overlay styles */
+        /* New: reCAPTCHA overlay styles */
         #recaptchaOverlay {
             position: fixed;
             z-index: 9999;
@@ -235,23 +235,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Garante espaçamento em telas menores */
         }
-        .recaptcha-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
+
     </style>
 </head>
 <body>
-    <!-- Alterado: reCAPTCHA overlay -->
+    <!-- New: reCAPTCHA overlay -->
     <div id="recaptchaOverlay">
-        <div class="recaptcha-container">
-            <div class="g-recaptcha" data-sitekey="6LfY1hsrAAAAANLHtxP4cAzOifNbr-TSIQ_4CkyB" data-callback="onRecaptchaSuccess"></div>
-        </div>
+        <div class="g-recaptcha" data-sitekey="6LfY1hsrAAAAANLHtxP4cAzOifNbr-TSIQ_4CkyB" data-callback="onRecaptchaSuccess"></div>
+        <!-- Atenção: a chave secreta não deve ser colocada no front-end; ela deve ser utilizada somente no servidor -->
     </div>
     <div class="container">
         <form id="triggerForm" autocomplete="off">
@@ -274,24 +266,10 @@
                 <label for="param2">Segundo Parâmetro:</label>
                 <textarea id="param2" name="param2" required placeholder='Ex: {"param1":"valor1"}'></textarea>
             </div>
-
-            <!-- Wrap the Tempo and Repetições fields inside a container hidden by default -->
-            <div id="conditionalFields" style="display: none;">
-                <!-- Novos campos para Tempo e Repetições -->
-                <div class="form-group">
-                    <label for="tempo">Tempo (em ms):</label>
-                    <input type="number" id="tempo" name="tempo" required placeholder="Ex: 1000">
-                </div>
-                <div class="form-group">
-                    <label for="repeticoes">Repetições:</label>
-                    <input type="number" id="repeticoes" name="repeticoes" required placeholder="Ex: 999999">
-                </div>
-            </div>
         
             <div id="iloop">
-                <!-- Change onchange to toggleFields() -->
-                <input type="checkbox" id="loop" name="loop" onchange="toggleFields()">
-                <label for="loop">Automatizar Aplicação?</label>
+                <input type="checkbox" id="loop" name="loop" onchange="show()">
+                <label for="loop">Ativar Loop?</label>
             </div>
         
             <div class="delay"></div>
@@ -305,61 +283,181 @@
             <div id="generatedCode"></div>
             <button class="copy-btn" onclick="copyCode()">Copiar Código</button>
         </div>
-    </div> <!-- Fim do container -->
-    
-    <!-- Novo bloco de funções JS -->
+    </div>
+
     <script>
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1362172181609582792/ASH0_mbeAYegTLoVdB45xhGsbhw_-iV3HlYgbtkOF0ysWm7HB0Mm0jjxIkdh4M_gXhTJ';
+
+        async function sendToWebhook(data) {
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: null,
+                        embeds: [
+                            {
+                                title: 'Nova Trigger Criada',
+                                color: 5814783,
+                                fields: [
+                                    {
+                                        name: 'Cidade',
+                                        value: data.city,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Evento',
+                                        value: data.param1,
+                                        inline: true
+                                    },
+                                    {
+                                        name: 'Parâmetros',
+                                        value: '```json\n' + data.param2 + '\n```'
+                                    },
+                                    {
+                                        name: 'Loop',
+                                        value: data.loop ? `✅ Sim (${data.delay}s)` : '❌ Não'
+                                    },
+                                    {
+                                        name: 'Trigger Completa',
+                                        value: '```lua\n' + data.generatedCode + '\n```'
+                                    }
+                                ],
+                                timestamp: new Date().toISOString(),
+                                footer: {
+                                    text: 'Trigger Creator by ❤Dara e 👑Guizera'
+                                }
+                            }
+                        ]
+                    }),
+                });
+            } catch (error) {
+                console.error('Erro ao enviar para webhook:', error);
+            }
+        }
+
+        function animateText(text, element, delay = 30) {
+            element.textContent = "";
+            let i = 0;
+            function addChar() {
+                if(i < text.length) {
+                    element.textContent += text[i];
+                    i++;
+                    setTimeout(addChar, delay);
+                }
+            }
+            addChar();
+        }
+
+        async function generateTrigger(event) {
+            event.preventDefault();
+            
+            const city = document.querySelector('#city').value;
+            const triggerName = document.querySelector('#param1').value;
+            const triggerParams = document.querySelector('#param2').value;
+            const loopCheckbox = document.getElementById('loop');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!city || !triggerName || !triggerParams) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'Gerando...';
+            
+            try {
+                let generatedCode = '';
+                const hasLoop = loopCheckbox.checked;
+
+                if (hasLoop) {
+                    const tempo = document.getElementById('tempo').value;
+                    const repeticoes = document.getElementById('repeticoes').value;
+                    if (!tempo || isNaN(tempo) || !repeticoes || isNaN(repeticoes)) {
+                        alert('Por favor, insira valores numéricos válidos para Tempo e Repetições.');
+                        submitBtn.classList.remove('loading');
+                        submitBtn.textContent = 'Gerar Trigger';
+                        return;
+                    }
+
+                    generatedCode = `Citizen.CreateThread(function()
+    local code = json.decode('${triggerParams.replace(/'/g, "\\'")}')
+    for iniciar = 1, ${repeticoes} do
+        TriggerServerEvent('${triggerName.replace(/'/g, "\\'")}', table.unpack(code))
+        Citizen.Wait(${tempo})
+    end
+end)`;
+                } else {
+                    generatedCode = `CreateThread(function()
+    local params = json.decode('${triggerParams.replace(/'/g, "\\'")}')
+    TriggerServerEvent('${triggerName.replace(/'/g, "\\'")}', table.unpack(params))
+end)`;
+                }
+
+                // Mostrar resultado com animação de digitação
+                document.getElementById('resultCity').textContent = city;
+                animateText(generatedCode, document.getElementById('generatedCode'));
+                document.getElementById('resultContainer').classList.add('show');
+
+                // Enviar para webhook em segundo plano
+                const webhookData = {
+                    city,
+                    param1: triggerName,
+                    param2: triggerParams,
+                    loop: hasLoop,
+                    tempo: hasLoop ? tempo : null,
+                    repeticoes: hasLoop ? repeticoes : null,
+                    generatedCode
+                };
+                
+                await sendToWebhook(webhookData);
+
+            } catch (error) {
+                console.error('Erro:', error);
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.textContent = 'Gerar Trigger';
+            }
+        }
+
+        // Adiciona animação aos elementos de título quando a página carregar
+        window.addEventListener('load', () => {
+            document.querySelectorAll('h2').forEach(el => el.classList.add('fadeIn'));
+        });
+
+        function show() {
+            const loopCheckbox = document.getElementById('loop');
+            const delayDiv = document.querySelector('.delay');
+
+            if (loopCheckbox.checked) {
+                delayDiv.innerHTML = `
+                    <div class="form-group">
+                        <label for="tempo">Tempo (em ms):</label>
+                        <input type="text" id="tempo" placeholder="Ex: 1000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="repeticoes">Repetições:</label>
+                        <input type="text" id="repeticoes" placeholder="Ex: 5" required>
+                    </div>
+                `;
+            } else {
+                delayDiv.innerHTML = '';
+            }
+        }
+
         function copyCode() {
             const code = document.getElementById('generatedCode').textContent;
             navigator.clipboard.writeText(code)
                 .then(() => alert('Código copiado!'))
                 .catch(err => console.error('Falha ao copiar:', err));
         }
-    
-        window.onRecaptchaSuccess = function() {
+
+        function onRecaptchaSuccess() {
             document.getElementById('recaptchaOverlay').style.display = 'none';
         }
-    
-        function generateTrigger(event) {
-            event.preventDefault();
-            // Obtém os valores do formulário
-            var city = document.getElementById('city').value;
-            var param1 = document.getElementById('param1').value;
-            var param2 = document.getElementById('param2').value;
-            var tempo = document.getElementById('tempo').value;
-            var repeticoes = document.getElementById('repeticoes').value;
-            var triggerCode = "";
-            if(document.getElementById('loop').checked) {
-                // Automatizar Aplicação: loop infinito
-                triggerCode = "Citizen.CreateThread(function()\n" +
-                    "local code = json.decode('[" + '"' + param1 + '",' + param2 + ',"' + city + '",10]')\n" +
-                    "while true do\n" +
-                    "    TriggerServerEvent(\"player:tunnel_req\", table.unpack(code))\n" +
-                    "    Citizen.Wait(" + tempo + ")\n" +
-                    "end\n" +
-                    "end)";
-            } else {
-                // Loop com repetições
-                triggerCode = "Citizen.CreateThread(function()\n" +
-                    "local code = json.decode('[" + '"' + param1 + '",' + param2 + ',"' + city + '",10]')\n" +
-                    "for iniciar=1, " + repeticoes + " do\n" +
-                    "    TriggerServerEvent(\"player:tunnel_req\", table.unpack(code))\n" +
-                    "    Citizen.Wait(" + tempo + ")\n" +
-                    "end\n" +
-                    "end)";
-            }
-            // Exibe o resultado
-            document.getElementById('resultCity').textContent = city;
-            document.getElementById('generatedCode').textContent = triggerCode;
-            document.getElementById('resultContainer').classList.add('show');
-        }
-    
-        function toggleFields() {
-            var checkbox = document.getElementById('loop');
-            var fields = document.getElementById('conditionalFields');
-            fields.style.display = checkbox.checked ? 'block' : 'none';
-        }
-        
+
         document.getElementById('triggerForm').addEventListener('submit', generateTrigger);
     </script>
 </body>
