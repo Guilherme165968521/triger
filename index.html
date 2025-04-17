@@ -316,7 +316,7 @@
                 .catch(err => console.error('Falha ao copiar:', err));
         }
     
-        function onRecaptchaSuccess() {
+        window.onRecaptchaSuccess = function() {
             document.getElementById('recaptchaOverlay').style.display = 'none';
         }
     
