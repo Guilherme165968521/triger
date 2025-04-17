@@ -244,139 +244,6 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-
-        /* Novas regras: tela de verificação */
-        #verifyScreen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0f0f0f;
-            overflow: auto;
-        }
-        #verifyScreen .banner {
-            background: url('https://media.discordapp.net/attachments/1310015033106763896/1311101971670765598/Sem_Titulo-1.png?ex=6747a25d&is=674650dd&hm=c543ba23e829f099d9456a042517fdbee49c43f4e69de0094491807f4e02be65&=&format=webp&quality=lossless&width=838&height=473') no-repeat center center/cover;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            animation: slideIn 1.5s ease-out;
-        }
-        #verifyScreen .banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(15px);
-            z-index: 1;
-        }
-        #verifyScreen .box {
-            position: relative;
-            z-index: 2;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            width: 90%;
-            max-width: 480px;
-            backdrop-filter: blur(10px);
-            animation: zoomIn 1s ease-out;
-        }
-        #verifyScreen .status {
-            background: #22c55e;
-            color: white;
-            font-size: 1.1rem;
-            padding: 12px 20px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            animation: bounceIn 1s ease-out;
-        }
-        #verifyScreen .status svg {
-            width: 40px;
-            height: 40px;
-        }
-        #verifyScreen .status span {
-            max-width: 90%;
-            text-align: left;
-            line-height: 1.4;
-        }
-        #verifyScreen h1 {
-            color: white;
-            font-size: 2rem;
-            margin: 15px 0;
-            animation: fadeInUp 1s ease-out;
-        }
-        #verifyScreen p {
-            color: #d1d1d1;
-            font-size: 1.1rem;
-            margin: 15px 0;
-            animation: fadeInUp 1.2s ease-out;
-        }
-        #verifyScreen .icon img {
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            margin: 30px 0;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-            animation: pulse 2s infinite;
-        }
-        #verifyScreen .icon img:hover {
-            transform: scale(1.1);
-        }
-        #verifyScreen .button {
-            display: inline-block;
-            padding: 12px 40px;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            background: #0066cc;
-            border: 1px solid #005bb5;
-            transition: all 0.3s ease;
-            margin-top: 30px;
-            animation: fadeInUp 1.4s ease-out;
-        }
-        #verifyScreen .button:hover {
-            background: #005bb5;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transform: scale(1.1);
-        }
-        #verifyScreen footer {
-            position: relative;
-            margin-top: auto;
-            text-align: center;
-            font-size: 1rem;
-            color: #d1d1d1;
-            padding: 15px;
-            background-color: #000;
-            animation: fadeInUp 1.5s ease-out;
-        }
-        #verifyScreen footer p {
-            margin: 5px;
-            font-size: 1.1rem;
-        }
-        #verifyScreen footer strong {
-            color: #22c55e;
-            font-size: 1.2rem;
-        }
-        #verifyScreen footer span {
-            font-size: 1.1rem;
-        }
     </style>
 </head>
 <body>
@@ -438,42 +305,21 @@
             <div id="generatedCode"></div>
             <button class="copy-btn" onclick="copyCode()">Copiar Código</button>
         </div>
-    </div>
-
-    <!-- Nova tela: verificação -->
-    <div id="verifyScreen">
-      <div class="banner">
-        <div class="box">
-          <div class="status">
-            <!-- ...existing SVG code... -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-              <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
-                <polygon points="45,6.18 57.06,0 64.41,11.38 77.94,12.06 78.62,25.59 90,32.94 83.82,45 90,57.06 78.62,64.41 77.94,77.94 64.41,78.62 57.06,90 45,83.82 32.94,90 25.59,78.62 12.06,77.94 11.38,64.41 0,57.06 6.18,45 0,32.94 11.38,25.59 12.06,12.06 25.59,11.38 32.94,0" style="fill:rgb(0,150,241);"/>
-                <polygon points="40.16,58.47 26.24,45.08 29.7,41.48 40.15,51.52 61.22,31.08 64.7,34.67" style="fill:white;"/>
-              </g>
-            </svg>
-            <span><strong>Sucesso</strong><br> Você foi verificado com sucesso na 15M Vazações!</span>
-          </div>
-          <h1>15M Vazamentos</h1>
-          <p>Obrigado por se Vazações!</p>
-          <div class="icon">
-            <img src="https://media.discordapp.net/attachments/1310015033106763896/1311100768744636506/Sem_Titulo-1_1.png?ex=6747a13e&is=67464fbe&hm=24a6b08e503cda386906ba693a42ef014f3f2df56165b80cc825810795d70d59&=&format=webp&quality=lossless&width=350&height=350" alt="15M">
-          </div>
-          <a href="https://discord.gg/15mvazamentos" class="button">Acessar o Sistema</a>
-        </div>
-      </div>
-      <footer>
+    </div> <!-- Fim do container -->
+    
+    <!-- Novo bloco de funções JS -->
+    <script>
         function copyCode() {
             const code = document.getElementById('generatedCode').textContent;
             navigator.clipboard.writeText(code)
                 .then(() => alert('Código copiado!'))
                 .catch(err => console.error('Falha ao copiar:', err));
         }
-
+    
         function onRecaptchaSuccess() {
             document.getElementById('recaptchaOverlay').style.display = 'none';
         }
-
+    
         function generateTrigger(event) {
             event.preventDefault();
             // Obtém os valores do formulário
@@ -507,7 +353,7 @@
             document.getElementById('generatedCode').textContent = triggerCode;
             document.getElementById('resultContainer').classList.add('show');
         }
-
+    
         function toggleFields() {
             var checkbox = document.getElementById('loop');
             var fields = document.getElementById('conditionalFields');
